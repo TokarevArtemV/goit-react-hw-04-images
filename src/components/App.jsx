@@ -4,8 +4,8 @@ import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
 import { Modal } from './Modal/Modal';
 import { ToastContainer, toast } from 'react-toastify';
-import { Watch } from 'react-loader-spinner';
 import * as ImageService from '../API/Api';
+import { Loader } from './Loader/Loader';
 
 export const App = () => {
   const [status, setStatus] = useState('idle');
@@ -49,12 +49,6 @@ export const App = () => {
     }
   }, [query, page]);
 
-  useEffect(() => {
-    if (largeImageURL !== '') {
-      setShowModal(true);
-    }
-  }, [largeImageURL]);
-
   const loadMoreImages = () => {
     setStatus('loading');
     setPage(prevState => prevState + 1);
@@ -69,18 +63,16 @@ export const App = () => {
     setStatus('loading');
   };
 
-  //============================== App methods Modal
-
   const handlerModal = (largeImageURL, tags) => {
     setLargeImageURL(largeImageURL);
     setTags(tags);
     setStatus('loading');
+    setShowModal(true);
   };
 
   const handlerCloseModal = () => {
     setShowModal(prevState => !prevState);
     setLargeImageURL('');
-    setStatus('idle');
   };
 
   return (
@@ -95,31 +87,12 @@ export const App = () => {
           imgSrc={largeImageURL}
           imgAlt={tags}
           onCloseModal={handlerCloseModal}
+          onChangeStatus={setStatus}
         />
       )}
       {error && <p className="textEmpty">Sorry. {error} 😭</p>}
       {isEmpty && <p className="textEmpty">Sorry. There are no images... 😭</p>}
-      {status === 'loading' && (
-        <Watch
-          visible={true}
-          height="80"
-          width="80"
-          radius="48"
-          color="#4fa94d"
-          ariaLabel="watch-loading"
-          wrapperStyle={{
-            backgroundColor: ' #cbcccd',
-            opacity: '0.5',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '100vh',
-            width: '100vw',
-            position: 'fixed',
-            zIndex: '99',
-          }}
-          wrapperClass=""
-        />
-      )}
+      {status === 'loading' && <Loader />}
       <ToastContainer autoClose={2000} hideProgressBar={true} theme="light" />
     </div>
   );

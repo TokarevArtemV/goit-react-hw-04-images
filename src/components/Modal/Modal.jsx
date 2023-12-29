@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-export const Modal = ({ imgSrc, imgAlt, onCloseModal }) => {
+export const Modal = ({ imgSrc, imgAlt, onCloseModal, onChangeStatus }) => {
   const hendlerOverlayClick = event => {
     if (event.target === event.currentTarget) {
       onCloseModal();
@@ -13,12 +13,14 @@ export const Modal = ({ imgSrc, imgAlt, onCloseModal }) => {
         onCloseModal();
       }
     };
+
     window.addEventListener('keydown', hendlerCloseModal);
+    onChangeStatus('idle');
 
     return () => {
       window.removeEventListener('keydown', hendlerCloseModal);
     };
-  }, [onCloseModal]);
+  }, [onCloseModal, onChangeStatus]);
 
   return (
     <div className="Overlay" onClick={hendlerOverlayClick}>
