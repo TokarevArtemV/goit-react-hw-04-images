@@ -1,33 +1,30 @@
-import { Component } from 'react';
-import disableScroll from 'disable-scroll';
+import { useEffect } from 'react';
 
-export class Modal extends Component {
-  componentDidMount() {
-    window.addEventListener('keydown', this.hendlerCloseModal);
-    disableScroll.on();
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.hendlerCloseModal);
-    disableScroll.off();
-  }
-
-  hendlerCloseModal = evt => {
-    if (evt?.code === 'Escape' || evt.target === evt.currentTarget) {
-      const { onCloseModal } = this.props;
+export const Modal = ({ imgSrc, imgAlt, onCloseModal }) => {
+  const hendlerOverlayClick = event => {
+    if (event.target === event.currentTarget) {
       onCloseModal();
     }
   };
 
-  render() {
-    const { imgSrc, imgAlt } = this.props;
+  useEffect(() => {
+    const hendlerCloseModal = event => {
+      if (event.code === 'Escape') {
+        onCloseModal();
+      }
+    };
+    window.addEventListener('keydown', hendlerCloseModal);
 
-    return (
-      <div className="Overlay" onClick={this.hendlerCloseModal}>
-        <div className="Modal">
-          <img src={imgSrc} alt={imgAlt} />
-        </div>
+    return () => {
+      window.removeEventListener('keydown', hendlerCloseModal);
+    };
+  }, [onCloseModal]);
+
+  return (
+    <div className="Overlay" onClick={hendlerOverlayClick}>
+      <div className="Modal">
+        <img src={imgSrc} alt={imgAlt} />
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
